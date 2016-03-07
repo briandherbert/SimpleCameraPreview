@@ -67,6 +67,9 @@ public class Camera2PreviewTexture extends BaseCameraPreviewTexture {
     private int mDegreesToRotatePhoto = 0;
     private int mDegreesToRotatePreview = 0;
 
+    static Size[] sSupportedSizes = null;
+    Size mLastAttemptedSize = null;
+
     public Camera2PreviewTexture(Context context) {
         super(context);
         init();
@@ -82,7 +85,7 @@ public class Camera2PreviewTexture extends BaseCameraPreviewTexture {
         init();
     }
 
-    public void init() {
+    void init() {
         log("init");
         setSurfaceTextureListener(this);
 
@@ -153,7 +156,19 @@ public class Camera2PreviewTexture extends BaseCameraPreviewTexture {
 
         log("Degrees to rotate photo " + mDegreesToRotatePhoto + " , preview " + mDegreesToRotatePreview);
 
-        mPreviewSize = CameraUtils.getBiggestSize(configs.getOutputSizes(SurfaceHolder.class), getWidth(), getHeight(), isPhotoSideways);
+        log("finding camera2 sizes using configs.getOutputSizes ");
+
+        if (sSupportedSizes == null) {
+            sSupportedSizes = configs.getOutputSizes(SurfaceHolder.class);
+        }
+
+        mPreviewSize = CameraUtils.getBiggestSize(sSupportedSizes, screenSize.x, screenSize.y, isPhotoSideways);
+
+        if (mPreviewSize == null) {
+            Log.v("blarg", "null");
+        } else {
+            Log.v("blarg", "mpreview size " + mPreviewSize.getWidth() + ", " + mPreviewSize.getHeight());
+        }
         int width = mPreviewSize.getWidth();
         int height = mPreviewSize.getHeight();
 
@@ -284,7 +299,31 @@ public class Camera2PreviewTexture extends BaseCameraPreviewTexture {
 
         @Override
         public void onConfigureFailed(CameraCaptureSession session) {
-            log("onConfigureFailed");
+            log("onConfigureFailed with size " + mPreviewSize + ", trying another");
+            int sizeIdx = -1;
+
+            for (int i = 0; i < sSupportedSizes.length; i++) {
+                if (sSupportedSizes[i].equals(mPreviewSize)) {
+                    sizeIdx = i;
+                    break;
+                }
+            }
+
+            if (sizeIdx > -1) {
+                Size[] newSizes = new Size[sSupportedSizes.length - 1];
+
+                int j = 0;
+                for (int i = 0; i < sSupportedSizes.length; i++) {
+                    if (i == sizeIdx) {
+                        continue;
+                    }
+
+                    newSizes[j++] = sSupportedSizes[i];
+                }
+
+                sSupportedSizes = newSizes;
+                setCamera(mIsFrontFacing);
+            }
         }
     };
 

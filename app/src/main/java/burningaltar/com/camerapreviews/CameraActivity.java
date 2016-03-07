@@ -25,6 +25,9 @@ import burningaltar.com.camerapreviewcompat.CameraUtils;
 public class CameraActivity extends Activity implements CameraPreviewViewCompat.PreviewBitmapListener, CameraPreviewViewCompat.PhotoBitmapListener {
     public static final String TAG = "KameraActivity";
 
+    public static final String KEY_FRONT_FACING = "KEY_FRONT_FACING";
+    public static final String KEY_API_LEVEL = "KEY_API_LEVEL";
+
     static final int REQ_CODE_CAMERA = 1;
 
     private boolean mIsCameraSideways = false;
@@ -41,6 +44,8 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
 
     CameraPreviewViewCompat mCameraView;
 
+    boolean mIsFrontFacing = true;
+    CameraPreviewViewCompat.CameraApiLevel mApiLevel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,17 +57,25 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
             return;
         }
 
+        if (savedInstanceState != null) {
+            mIsFrontFacing = savedInstanceState.getBoolean(KEY_FRONT_FACING);
+            mApiLevel = (CameraPreviewViewCompat.CameraApiLevel) savedInstanceState.getSerializable(KEY_API_LEVEL);
+
+            Log.v(TAG, "Restored state, front facing? " + mIsFrontFacing + " api " + mApiLevel);
+        }
+
         setContentView(R.layout.camera_preview_main);
 
         mCameraView = (CameraPreviewViewCompat) findViewById(R.id.camera_preview);
-
         mImgPreviewSnapshot = (ImageView) findViewById(R.id.img_preview_snapshot);
+
+        mApiLevel = mCameraView.getCameraAPILevel();
 
         findViewById(R.id.btn_switch).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v(TAG, "clicked");
-                mCameraView.switchCameras();
+                mIsFrontFacing = mCameraView.switchCameras();
+                Log.v(TAG, "Switched camera to " + (mIsFrontFacing ? "front" : "back"));
             }
         });
 
@@ -81,7 +94,23 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
         });
 
         mBtnCamVersion = (Button) findViewById(R.id.lbl_cam_ver);
-        mBtnCamVersion.setText(mCameraView.getCameraAPILevel().toString());
+        mBtnCamVersion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CameraPreviewViewCompat.CameraApiLevel apiLevel =
+                        CameraPreviewViewCompat.CameraApiLevel.one.equals(mApiLevel) ?
+                                CameraPreviewViewCompat.CameraApiLevel.two :
+                                CameraPreviewViewCompat.CameraApiLevel.one;
+
+                mCameraView.setCameraApiLevel(apiLevel);
+
+                mApiLevel = mCameraView.getCameraAPILevel();
+
+                mBtnCamVersion.setText("v. " + mApiLevel.toString());
+            }
+        });
+
+        mBtnCamVersion.setText("v. " + mApiLevel.toString());
     }
 
     protected void onResume() {
@@ -100,10 +129,12 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
     }
 
     void onHasPermission() {
-        mCameraView.setCamera(true);
+        mCameraView.showPreview(mIsFrontFacing);
     }
 
-    /** Check if this device has a camera */
+    /**
+     * Check if this device has a camera
+     */
     private boolean hasCamera(Context context) {
         return (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA));
     }
@@ -112,7 +143,7 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
     public void onPreview(byte[] data, int degreesToRotate) {
         Log.v(TAG, "on preview, data size " + data.length + " rotate preview " + degreesToRotate);
 
-        Bitmap bitmap = BitmapFactory.decodeByteArray(data , 0, data.length);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
         Log.v("blarg", "preview size " + bitmap.getWidth() + ", " + bitmap.getHeight());
 
@@ -198,5 +229,12 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_FRONT_FACING, mIsFrontFacing);
+        outState.putSerializable(KEY_API_LEVEL, mApiLevel);
     }
 }

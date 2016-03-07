@@ -1,12 +1,16 @@
 package burningaltar.com.camerapreviewcompat;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.TextureView;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 /**
@@ -52,6 +56,8 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
 
     private boolean mIsSurfaceAvailable = false;
 
+    Point screenSize = new Point();
+
     public BaseCameraPreviewTexture(Context context) {
         super(context);
     }
@@ -66,7 +72,17 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
-        log("Texture available, size is " + width + ", " + height);
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            display.getRealSize(screenSize);
+        } else {
+            display.getSize(screenSize);
+        }
+
+
+        log("Texture available, size is " + width + ", " + height + " screen size is " + screenSize.toString());
 
         mIsSurfaceAvailable = true;
 
@@ -184,8 +200,12 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
         mListener = listener;
     }
 
-    public void switchCameras() {
+    /**
+     * Returns isFrontFacing
+     */
+    public boolean switchCameras() {
         setCamera(null == mIsFrontFacing ? true : !mIsFrontFacing);
+        return mIsFrontFacing;
     }
 
     public abstract PreviewInfo setCameraImpl(boolean frontFacing);

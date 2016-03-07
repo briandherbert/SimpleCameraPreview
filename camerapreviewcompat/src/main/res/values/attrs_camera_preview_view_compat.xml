@@ -1,13 +1,10 @@
 <resources>
     <declare-styleable name="CameraPreviewViewCompat">
-        <attr name="exampleString" format="string" />
-        <attr name="exampleDimension" format="dimension" />
-        <attr name="exampleColor" format="color" />
-        <attr name="exampleDrawable" format="color|reference" />
+        <attr name="frontFacing" format="boolean" />
 
         <attr name="cameraApiLevel">
-            <enum name="one" value="1" />
-            <enum name="two" value="2" />
+            <enum name="one" value="0" />
+            <enum name="two" value="1" />
         </attr>
     </declare-styleable>
 </resources>

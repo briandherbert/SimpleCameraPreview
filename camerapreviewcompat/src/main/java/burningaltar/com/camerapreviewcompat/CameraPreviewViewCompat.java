@@ -1,6 +1,7 @@
 package burningaltar.com.camerapreviewcompat;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
@@ -9,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -17,6 +20,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -48,11 +52,12 @@ public class CameraPreviewViewCompat extends RelativeLayout {
         public void onPhoto(byte[] photoData, int degreesToRotate);
     }
 
-    private CameraApiLevel mCameraApiLevel = null;
+    private CameraApiLevel mCameraApiLevel = CameraApiLevel.one;
     private boolean mIsFrontFacing = false;
 
     private BaseCameraPreviewTexture mPreviewTexture;
-    private boolean mUserSetApiLevel = false;
+
+    private boolean mSupportsCamera2 = false;
 
     public CameraPreviewViewCompat(Context context) {
         super(context);
@@ -70,34 +75,78 @@ public class CameraPreviewViewCompat extends RelativeLayout {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
+        Log.v(TAG, "init");
+
+        setGravity(Gravity.CENTER);
+
+        mSupportsCamera2 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+
         // Load attributes
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.CameraPreviewViewCompat, defStyle, 0);
 
-        String apiVersion = a.getString(R.styleable.CameraPreviewViewCompat_cameraApiLevel);
+        int apiVersion = a.getInt(R.styleable.CameraPreviewViewCompat_cameraApiLevel, -1);
+        mIsFrontFacing = a.getBoolean(R.styleable.CameraPreviewViewCompat_frontFacing, mIsFrontFacing);
+
         Log.v(TAG, "Attrs api version " + apiVersion);
-        if (apiVersion != null) {
-            mCameraApiLevel = CameraApiLevel.valueOf(apiVersion);
-            mUserSetApiLevel = true;
+
+        if (apiVersion > 0) {
+            mCameraApiLevel = CameraApiLevel.values()[apiVersion];
         } else {
-            mCameraApiLevel = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? CameraApiLevel.two : CameraApiLevel.one;
+            mCameraApiLevel = mSupportsCamera2 ? CameraApiLevel.two : CameraApiLevel.one;
         }
 
-        Log.v(TAG, "Using camera API " + mCameraApiLevel);
+        Log.v(TAG, "Using camera API " + mCameraApiLevel + " front facing? " + mIsFrontFacing);
 
-        setGravity(Gravity.CENTER);
+        if (isInEditMode()) {
+            TextView tv = new TextView(getContext());
+            tv.setText("CameraPreviewViewCompat\nAPI: " + mCameraApiLevel + "\nFront facing: " + mIsFrontFacing);
+            addView(tv);
+            return;
+        }
+
+        showPreview();
+    }
+
+    public void showPreview() {
+        showPreview(mIsFrontFacing);
+    }
+
+    public void showPreview(boolean frontFacing) {
+        Log.v(TAG, "Show preview, front? " + frontFacing);
+
+        mIsFrontFacing = frontFacing;
 
         mPreviewTexture = CameraApiLevel.one.equals(mCameraApiLevel) ? new CameraPreviewTexture(getContext()) :
                 new Camera2PreviewTexture(getContext());
 
         mPreviewTexture.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        removeAllViews();
         addView(mPreviewTexture);
+
+        mPreviewTexture.setCamera(mIsFrontFacing);
     }
 
-    public void setCamera(boolean frontFacing) {
-        if (mPreviewTexture == null) return;
-        mIsFrontFacing = frontFacing;
-        mPreviewTexture.setCamera(mIsFrontFacing);
+    public boolean getIsFrontFacing() {
+        return mIsFrontFacing;
+    }
+
+    /**
+     * This will have no effect below API 21
+     *
+     * @param apiLevel
+     */
+    public void setCameraApiLevel(CameraApiLevel apiLevel) {
+        if (!mSupportsCamera2) return;
+
+        mCameraApiLevel = apiLevel;
+
+        showPreview();
+    }
+
+    public CameraApiLevel getCameraApiLevel() {
+        return mCameraApiLevel;
     }
 
     public void getPhoto(PhotoBitmapListener photoListener) {
@@ -121,13 +170,15 @@ public class CameraPreviewViewCompat extends RelativeLayout {
         mPreviewTexture.setListener(listener);
     }
 
-    public void switchCameras() {
-        if (mPreviewTexture == null) return;
-        mPreviewTexture.switchCameras();
+    /**
+     * Returns isFrontFacing
+     */
+    public boolean switchCameras() {
+        if (mPreviewTexture == null) return false;
+        return mPreviewTexture.switchCameras();
     }
 
     public CameraApiLevel getCameraAPILevel() {
         return mCameraApiLevel;
     }
-
 }
