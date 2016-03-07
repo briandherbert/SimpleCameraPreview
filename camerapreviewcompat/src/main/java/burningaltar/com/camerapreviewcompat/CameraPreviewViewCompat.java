@@ -90,7 +90,7 @@ public class CameraPreviewViewCompat extends RelativeLayout {
 
         Log.v(TAG, "Attrs api version " + apiVersion);
 
-        if (apiVersion > 0) {
+        if (apiVersion >= 0) {
             mCameraApiLevel = CameraApiLevel.values()[apiVersion];
         } else {
             mCameraApiLevel = mSupportsCamera2 ? CameraApiLevel.two : CameraApiLevel.one;
