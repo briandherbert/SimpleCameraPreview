@@ -47,6 +47,9 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
     boolean mIsFrontFacing = true;
     CameraPreviewViewCompat.CameraApiLevel mApiLevel;
 
+    // Load the full preview/photo sizes into memory?
+    private boolean mDecodeResampled = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,9 +106,7 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
                                 CameraPreviewViewCompat.CameraApiLevel.one;
 
                 mCameraView.setCameraApiLevel(apiLevel);
-
                 mApiLevel = mCameraView.getCameraAPILevel();
-
                 mBtnCamVersion.setText("v. " + mApiLevel.toString());
             }
         });
@@ -143,13 +144,11 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
     public void onPreview(byte[] data, int degreesToRotate) {
         Log.v(TAG, "on preview, data size " + data.length + " rotate preview " + degreesToRotate);
 
-        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+        Bitmap bitmap = mDecodeResampled ?
+                CameraUtils.decodeSampledBitmap(data, mImgPreviewSnapshot.getWidth(), mImgPreviewSnapshot.getHeight()) :
+                BitmapFactory.decodeByteArray(data, 0, data.length);
 
-        Log.v("blarg", "preview size " + bitmap.getWidth() + ", " + bitmap.getHeight());
-
-        //Bitmap bmp = CameraUtils.decodeSampledBitmap(data, mImgPreviewSnapshot.getWidth(), mImgPreviewSnapshot.getHeight());
-
-        // Log.v(TAG, "resampled bmp size " + bmp.getByteCount());
+         Log.v(TAG, "resampled bmp size " + bitmap.getByteCount());
 
         // TODO: This fails w OOM on Galaxy S6!
         mImgPreviewSnapshot.setRotation(degreesToRotate);
@@ -160,11 +159,13 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
     public void onPhoto(byte[] data, int degreesToRotate) {
         Log.v(TAG, "on photo, data size " + data.length + " rotate img " + degreesToRotate);
 
-        Bitmap bmp = CameraUtils.decodeSampledBitmap(data, mImgPreviewSnapshot.getWidth(), mImgPreviewSnapshot.getHeight());
+        Bitmap bitmap = mDecodeResampled ?
+                CameraUtils.decodeSampledBitmap(data, mImgPreviewSnapshot.getWidth(), mImgPreviewSnapshot.getHeight()) :
+                BitmapFactory.decodeByteArray(data, 0, data.length);
 
-        Log.v(TAG, "resampled bmp size " + bmp.getByteCount());
+        Log.v(TAG, "resampled bmp size " + bitmap.getByteCount());
         mImgPreviewSnapshot.setRotation(degreesToRotate);
-        mImgPreviewSnapshot.setImageBitmap(bmp);
+        mImgPreviewSnapshot.setImageBitmap(bitmap);
     }
 
     @TargetApi(23)

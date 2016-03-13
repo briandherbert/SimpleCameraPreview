@@ -162,13 +162,8 @@ public class Camera2PreviewTexture extends BaseCameraPreviewTexture {
             sSupportedSizes = configs.getOutputSizes(SurfaceHolder.class);
         }
 
-        mPreviewSize = CameraUtils.getBiggestSize(sSupportedSizes, screenSize.x, screenSize.y, isPhotoSideways);
+        mPreviewSize = CameraUtils.getBiggestSize(sSupportedSizes, getWidth(), getHeight(), isPhotoSideways);
 
-        if (mPreviewSize == null) {
-            Log.v("blarg", "null");
-        } else {
-            Log.v("blarg", "mpreview size " + mPreviewSize.getWidth() + ", " + mPreviewSize.getHeight());
-        }
         int width = mPreviewSize.getWidth();
         int height = mPreviewSize.getHeight();
 

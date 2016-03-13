@@ -81,8 +81,8 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
             display.getSize(screenSize);
         }
 
-
-        log("Texture available, size is " + width + ", " + height + " screen size is " + screenSize.toString());
+        log("Texture available, size is " + width + ", " + height + " screen size is " + screenSize.toString() +
+        " device model " + Build.MODEL);
 
         mIsSurfaceAvailable = true;
 

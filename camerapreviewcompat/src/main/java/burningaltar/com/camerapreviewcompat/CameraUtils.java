@@ -24,7 +24,6 @@ import java.util.List;
 public class CameraUtils {
     public static final String TAG = "CameraUtils";
 
-
     /**
      * Set camera parameters such as preview size, picture size, focus mode, etc.
      */
@@ -38,9 +37,12 @@ public class CameraUtils {
         params.setPreviewSize(mBestPreviewSize.width, mBestPreviewSize.height);
 
         // Picture size
-//        Camera.Size mBestPicSize = getBiggestSize(params.getSupportedPictureSizes(), width, height, isSideways);
-//        Log.v(TAG, "Best pic size is " + mBestPicSize.width + " , " + mBestPicSize.height);
-//        params.setPictureSize(mBestPicSize.width, mBestPicSize.height);
+        Camera.Size mBestPicSize = getBiggestSize(params.getSupportedPictureSizes());
+        Log.v(TAG, "Best pic size is " + mBestPicSize.width + " , " + mBestPicSize.height);
+        params.setPictureSize(mBestPicSize.width, mBestPicSize.height);
+
+        // XXX: Nexus 4 provision!
+        //params.setPictureSize(mBestPreviewSize.width, mBestPreviewSize.height);
 
         // Focus mode
         String focusMode = getBestFocusMode(params);
@@ -55,6 +57,16 @@ public class CameraUtils {
     public static int getBiggestSizeIdx(@NonNull Point[] sizes, int width, int height, boolean isSideways) {
         if (sizes == null || width <= 0 || height <= 0) {
             return 0;
+        }
+
+        /*
+        Scumbag exceptional cases
+        */
+
+        String model = Build.MODEL;
+        if (model != null && model.equals("Nexus 4")) {
+            Log.v(TAG, "Nexus 4; using max size for preview and photo");
+            width = height = Integer.MAX_VALUE;
         }
 
         if (isSideways) {
@@ -254,6 +266,8 @@ public class CameraUtils {
     static byte[] fromPreviewData(byte[] bytes, Camera.Size previewSize) {
         int width = previewSize.width;
         int height = previewSize.height;
+
+        Log.v(TAG, "Converting preview data from size " + width + ", " + height);
 
         // Convert bytes first to YUV image, then to RGB
         YuvImage yuvImage = new YuvImage(bytes, ImageFormat.NV21, width, height, null);

@@ -134,10 +134,13 @@ public class CameraPreviewTexture extends BaseCameraPreviewTexture {
         // We want to fit the entire preview in the view's initial bounds, so we'll account for rotation and scale down
         if (params != null) {
             Camera.Size previewSize = params.getPreviewSize();
-            log("preview dimens " + previewSize.width + ", " + previewSize.height);
             mPreviewInfo = new PreviewInfo(previewSize.width, previewSize.height, isSideways);
 
             mCamera.setParameters(params);
+
+            Camera.Size prevSize = mCamera.getParameters().getPreviewSize();
+            log("preview dimens " + previewSize.width + ", " + previewSize.height + " according to cam " + prevSize.width + ", " + prevSize.height);
+
         }
 
         return true;
@@ -166,6 +169,12 @@ public class CameraPreviewTexture extends BaseCameraPreviewTexture {
 
     public boolean isCameraReady() {
         return mIsCameraReady;
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        cleanup();
+        return super.onSurfaceTextureDestroyed(surface);
     }
 
     void cleanup() {
