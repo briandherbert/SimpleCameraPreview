@@ -1,4 +1,4 @@
-# SimpleCameraPreview
+# SimpleCameraPreview for Android
 
 ...shows a camera preview with minimal effort at the expense of customization, and includes very basic photo-taking functionality.
 
@@ -16,6 +16,9 @@ That alone will show a camera preview if possible; the custom attributes are opt
 **FOR API LEVEL >= 23, YOU MUST REMEMBER TO GRANT CAMERA PERMISSIONS** because of Android's new and annoying on-demand permissions model. This library will fail silently if permissions aren't present when initialized, so you'll have to call `SimpleCameraPreview.showPreview()` after they're granted. See [CameraActivity.java](CameraActivity.java) for a ghetto example of this.
 
 ## Features
+#### Camera API
+For Android APIs 21 and above, [camera2](http://developer.android.com/intl/es/reference/android/hardware/camera2/package-summary.html) is the default package used under the hood. Below 21, the [legacy camera](http://developer.android.com/intl/es/reference/android/hardware/Camera.html) package is used. As shown in the XML example above, you can force the camera api to `one` or `two`, though it'll only be effective to downgrade. This can also be done via `.setCameraApiLevel()`
+
 #### Front/Rear Camera
 Use XML attribute `frontFacing`, or set it in `.showPreview(boolean isFrontFacing)`. There's also `.switchCameras()` to blindly toggle.
 
@@ -31,8 +34,21 @@ There are two types of photos you can take:
 
 2. `.getNextPreviewFrame()` will call back with a photo that's the size of the selected preview dimens, so it'll be at most as large as your preview. This call will be relatively fast, but the image will be of "preview" quality. The byte array has already been converted from YUV into RGB.
 
-#### Camera API
-As shown in the XML example above, you can force the camera api to `one` or `two`, though it'll only be effective to downgrade. This can also be done via `.setCameraApiLevel()`
+
+## Usage
+Throw this in your gradle file:
+```XML
+repositories {
+  maven {
+    url "https://jitpack.io"
+  }
+}
+
+dependencies {
+  compile 'com.github.briandherbert:SimpleCameraPreview:0.1.4'
+}
+```
+Or if the Jitpack route doesn't suit you, copy/paste willy-nilly. There are individual classes for both a camera and camera2 preview view.
 
 ## Shortcomings / TODO / Wishlist
 + Doesn't save which camera (front/rear) is used or API level; persisting those through activity restarts is the implementer's job.
