@@ -41,7 +41,7 @@ import java.util.List;
  * <p/>
  */
 @TargetApi(21)
-public class Camera2PreviewTexture extends BaseCameraPreviewTexture {
+class Camera2PreviewTexture extends BaseCameraPreviewTexture {
     public static final String TAG = Camera2PreviewTexture.class.getSimpleName();
 
     CameraManager mCameraManager;

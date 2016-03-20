@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 @TargetApi(14)
 @SuppressWarnings("deprecation")
-public class CameraPreviewTexture extends BaseCameraPreviewTexture {
+class CameraPreviewTexture extends BaseCameraPreviewTexture {
     private static final String TAG = CameraPreviewTexture.class.getSimpleName();
 
     private Camera mCamera;
