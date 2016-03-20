@@ -152,7 +152,7 @@ class CameraPreviewTexture extends BaseCameraPreviewTexture {
      * @param previewBitmapListener
      */
     @Override
-    public void getNextPreviewFrame(CameraPreviewViewCompat.PreviewBitmapListener previewBitmapListener) {
+    public void getNextPreviewFrame(SimpleCameraPreview.PreviewBitmapListener previewBitmapListener) {
         mPreviewBitmapListener = previewBitmapListener;
         if (mCamera == null) return;
 
@@ -160,7 +160,7 @@ class CameraPreviewTexture extends BaseCameraPreviewTexture {
     }
 
     @Override
-    public void getPhoto(CameraPreviewViewCompat.PhotoBitmapListener photoListener) {
+    public void getPhoto(SimpleCameraPreview.PhotoBitmapListener photoListener) {
         mPhotoBitmapListener = photoListener;
         if (mCamera == null) return;
 

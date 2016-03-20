@@ -20,7 +20,6 @@ import android.view.Surface;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-
 public class CameraUtils {
     public static final String TAG = "CameraUtils";
 
@@ -82,7 +81,7 @@ public class CameraUtils {
             log("Found size " + sizes[i].x + ", " + sizes[i].y);
             int score = sizes[i].x * sizes[i].y;
             if (sizes[i].x <= width && sizes[i].y <= height &&
-                   score > biggestScore) {
+                    score > biggestScore) {
                 biggestScore = score;
                 biggestIdx = i;
             }
@@ -198,6 +197,7 @@ public class CameraUtils {
 
     /**
      * For some reason, only 270 and 90 need to be swapped, and only those
+     *
      * @param activity
      * @return
      */

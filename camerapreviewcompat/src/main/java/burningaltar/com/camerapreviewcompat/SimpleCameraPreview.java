@@ -5,31 +5,20 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Debug;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * TODO: document your custom view class.
  */
-public class CameraPreviewViewCompat extends RelativeLayout {
-    public static final String TAG = CameraPreviewViewCompat.class.getSimpleName();
+public class SimpleCameraPreview extends RelativeLayout {
+    public static final String TAG = SimpleCameraPreview.class.getSimpleName();
 
     public enum CameraApiLevel {
         one,
@@ -61,17 +50,17 @@ public class CameraPreviewViewCompat extends RelativeLayout {
 
     private boolean mSupportsCamera2 = false;
 
-    public CameraPreviewViewCompat(Context context) {
+    public SimpleCameraPreview(Context context) {
         super(context);
         init(null, 0);
     }
 
-    public CameraPreviewViewCompat(Context context, AttributeSet attrs) {
+    public SimpleCameraPreview(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public CameraPreviewViewCompat(Context context, AttributeSet attrs, int defStyle) {
+    public SimpleCameraPreview(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
     }
@@ -85,10 +74,10 @@ public class CameraPreviewViewCompat extends RelativeLayout {
 
         // Load attributes
         final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, R.styleable.CameraPreviewViewCompat, defStyle, 0);
+                attrs, R.styleable.SimpleCameraPreview, defStyle, 0);
 
-        int apiVersion = a.getInt(R.styleable.CameraPreviewViewCompat_cameraApiLevel, -1);
-        mIsFrontFacing = a.getBoolean(R.styleable.CameraPreviewViewCompat_frontFacing, mIsFrontFacing);
+        int apiVersion = a.getInt(R.styleable.SimpleCameraPreview_cameraApiLevel, -1);
+        mIsFrontFacing = a.getBoolean(R.styleable.SimpleCameraPreview_frontFacing, mIsFrontFacing);
 
         log("Attrs api version " + apiVersion);
 

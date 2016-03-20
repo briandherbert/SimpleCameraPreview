@@ -1,7 +1,6 @@
 package burningaltar.com.camerapreviews;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,7 +21,7 @@ import android.widget.Toast;
 import burningaltar.com.camerapreviewcompat.*;
 import burningaltar.com.camerapreviewcompat.BuildConfig;
 
-public class CameraActivity extends Activity implements CameraPreviewViewCompat.PreviewBitmapListener, CameraPreviewViewCompat.PhotoBitmapListener {
+public class CameraActivity extends Activity implements SimpleCameraPreview.PreviewBitmapListener, SimpleCameraPreview.PhotoBitmapListener {
     public static final String TAG = "CameraActivity";
 
     public static final String KEY_FRONT_FACING = "KEY_FRONT_FACING";
@@ -42,10 +41,10 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
 
     Button mBtnCamVersion;
 
-    CameraPreviewViewCompat mCameraView;
+    SimpleCameraPreview mCameraView;
 
     boolean mIsFrontFacing = true;
-    CameraPreviewViewCompat.CameraApiLevel mApiLevel;
+    SimpleCameraPreview.CameraApiLevel mApiLevel;
 
     // Load the full preview/photo sizes into memory?
     private boolean mDecodeResampled = false;
@@ -64,14 +63,14 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
 
         if (savedInstanceState != null) {
             mIsFrontFacing = savedInstanceState.getBoolean(KEY_FRONT_FACING);
-            mApiLevel = (CameraPreviewViewCompat.CameraApiLevel) savedInstanceState.getSerializable(KEY_API_LEVEL);
+            mApiLevel = (SimpleCameraPreview.CameraApiLevel) savedInstanceState.getSerializable(KEY_API_LEVEL);
 
             Log.v(TAG, "Restored state, front facing? " + mIsFrontFacing + " api " + mApiLevel);
         }
 
         setContentView(R.layout.camera_preview_main);
 
-        mCameraView = (CameraPreviewViewCompat) findViewById(R.id.camera_preview);
+        mCameraView = (SimpleCameraPreview) findViewById(R.id.camera_preview);
         mImgPreviewSnapshot = (ImageView) findViewById(R.id.img_preview_snapshot);
 
         mApiLevel = mCameraView.getCameraAPILevel();
@@ -102,10 +101,10 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
         mBtnCamVersion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraPreviewViewCompat.CameraApiLevel apiLevel =
-                        CameraPreviewViewCompat.CameraApiLevel.one.equals(mApiLevel) ?
-                                CameraPreviewViewCompat.CameraApiLevel.two :
-                                CameraPreviewViewCompat.CameraApiLevel.one;
+                SimpleCameraPreview.CameraApiLevel apiLevel =
+                        SimpleCameraPreview.CameraApiLevel.one.equals(mApiLevel) ?
+                                SimpleCameraPreview.CameraApiLevel.two :
+                                SimpleCameraPreview.CameraApiLevel.one;
 
                 mCameraView.setCameraApiLevel(apiLevel);
                 mApiLevel = mCameraView.getCameraAPILevel();

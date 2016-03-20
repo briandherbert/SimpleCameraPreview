@@ -41,12 +41,12 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
         }
     }
 
-    CameraPreviewViewCompat.PreviewBitmapListener mPreviewBitmapListener = null;
-    CameraPreviewViewCompat.PhotoBitmapListener mPhotoBitmapListener = null;
+    SimpleCameraPreview.PreviewBitmapListener mPreviewBitmapListener = null;
+    SimpleCameraPreview.PhotoBitmapListener mPhotoBitmapListener = null;
 
     int mDegreesToRotatePreview = 0;
 
-    private CameraPreviewViewCompat.CameraPreviewStatusListener mListener;
+    private SimpleCameraPreview.CameraPreviewStatusListener mListener;
 
     PreviewInfo mPreviewInfo = null;
 
@@ -196,7 +196,7 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
         }
     }
 
-    public final void setListener(CameraPreviewViewCompat.CameraPreviewStatusListener listener) {
+    public final void setListener(SimpleCameraPreview.CameraPreviewStatusListener listener) {
         mListener = listener;
     }
 
@@ -216,9 +216,9 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
      * @return whether the new camera is front facing
      */
 
-    public abstract void getPhoto(CameraPreviewViewCompat.PhotoBitmapListener photoListener);
+    public abstract void getPhoto(SimpleCameraPreview.PhotoBitmapListener photoListener);
 
-    public abstract void getNextPreviewFrame(CameraPreviewViewCompat.PreviewBitmapListener previewBitmapListener);
+    public abstract void getNextPreviewFrame(SimpleCameraPreview.PreviewBitmapListener previewBitmapListener);
 
     public String getTag() {
         return TAG;

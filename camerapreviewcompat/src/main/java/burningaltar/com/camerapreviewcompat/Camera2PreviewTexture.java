@@ -19,7 +19,6 @@ import android.media.ImageReader;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -173,13 +172,13 @@ class Camera2PreviewTexture extends BaseCameraPreviewTexture {
     }
 
     @Override
-    public void getPhoto(CameraPreviewViewCompat.PhotoBitmapListener photoListener) {
+    public void getPhoto(SimpleCameraPreview.PhotoBitmapListener photoListener) {
         mPhotoBitmapListener = photoListener;
         captureImage(false);
     }
 
     @Override
-    public void getNextPreviewFrame(CameraPreviewViewCompat.PreviewBitmapListener previewBitmapListener) {
+    public void getNextPreviewFrame(SimpleCameraPreview.PreviewBitmapListener previewBitmapListener) {
         log("Get next preview frame");
         mPreviewBitmapListener = previewBitmapListener;
         captureImage(true);

@@ -1,5 +1,5 @@
 <resources>
-    <declare-styleable name="CameraPreviewViewCompat">
+    <declare-styleable name="SimpleCameraPreview">
         <attr name="frontFacing" format="boolean" />
 
         <attr name="cameraApiLevel">
