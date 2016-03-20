@@ -127,7 +127,7 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
      */
     private final void resizeToPreview(PreviewInfo previewInfo) {
         if (previewInfo == null) {
-            Log.w(TAG, "Preview info is null!");
+            log("Preview info is null!");
             return;
         }
 
@@ -184,7 +184,7 @@ abstract class BaseCameraPreviewTexture extends TextureView implements TextureVi
         if (lp instanceof RelativeLayout.LayoutParams) {
             ((RelativeLayout.LayoutParams) lp).setMargins(marginHoriz, marginVert, marginHoriz, marginVert);
         } else {
-            Log.w(TAG, "Preview isn't in a Relative or LinearLayout; we can't scale the image down!");
+            log("Preview isn't in a Relative or LinearLayout; we can't scale the image down!");
         }
 
         log("margin horizontal " + marginHoriz + " vert " + marginVert);

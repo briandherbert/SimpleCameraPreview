@@ -10,9 +10,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Debug;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -75,7 +77,7 @@ public class CameraPreviewViewCompat extends RelativeLayout {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        Log.v(TAG, "init");
+        log("init");
 
         setGravity(Gravity.CENTER);
 
@@ -88,7 +90,7 @@ public class CameraPreviewViewCompat extends RelativeLayout {
         int apiVersion = a.getInt(R.styleable.CameraPreviewViewCompat_cameraApiLevel, -1);
         mIsFrontFacing = a.getBoolean(R.styleable.CameraPreviewViewCompat_frontFacing, mIsFrontFacing);
 
-        Log.v(TAG, "Attrs api version " + apiVersion);
+        log("Attrs api version " + apiVersion);
 
         if (apiVersion >= 0) {
             mCameraApiLevel = CameraApiLevel.values()[apiVersion];
@@ -96,7 +98,7 @@ public class CameraPreviewViewCompat extends RelativeLayout {
             mCameraApiLevel = mSupportsCamera2 ? CameraApiLevel.two : CameraApiLevel.one;
         }
 
-        Log.v(TAG, "Using camera API " + mCameraApiLevel + " front facing? " + mIsFrontFacing);
+        log("Using camera API " + mCameraApiLevel + " front facing? " + mIsFrontFacing);
 
         if (isInEditMode()) {
             TextView tv = new TextView(getContext());
@@ -113,7 +115,14 @@ public class CameraPreviewViewCompat extends RelativeLayout {
     }
 
     public void showPreview(boolean frontFacing) {
-        Log.v(TAG, "Show preview, front? " + frontFacing);
+        log("Show preview, front? " + frontFacing);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!ensurePermissions()) {
+                log("Camera permissions not yet granted!");
+                return;
+            }
+        }
 
         mIsFrontFacing = frontFacing;
 
@@ -130,6 +139,12 @@ public class CameraPreviewViewCompat extends RelativeLayout {
 
     public boolean getIsFrontFacing() {
         return mIsFrontFacing;
+    }
+
+    @TargetApi(23)
+    private boolean ensurePermissions() {
+        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
@@ -153,7 +168,7 @@ public class CameraPreviewViewCompat extends RelativeLayout {
         if (mPreviewTexture != null) {
             mPreviewTexture.getPhoto(photoListener);
         } else {
-            Log.w(TAG, "Tried to get photo while camera isn't ready!");
+            log("Tried to get photo while camera isn't ready!");
         }
     }
 
@@ -161,7 +176,7 @@ public class CameraPreviewViewCompat extends RelativeLayout {
         if (mPreviewTexture != null) {
             mPreviewTexture.getNextPreviewFrame(previewBitmapListener);
         } else {
-            Log.w(TAG, "Tried to get preview while camera isn't ready!");
+            log("Tried to get preview while camera isn't ready!");
         }
     }
 
@@ -180,5 +195,9 @@ public class CameraPreviewViewCompat extends RelativeLayout {
 
     public CameraApiLevel getCameraAPILevel() {
         return mCameraApiLevel;
+    }
+
+    public void log(String msg) {
+        Log.v(TAG, msg);
     }
 }

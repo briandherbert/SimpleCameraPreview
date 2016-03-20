@@ -31,18 +31,15 @@ public class CameraUtils {
         if (params == null) return null;
 
         // Preview size
-        Log.v(TAG, "getting best preview size for size " + width + ", " + height);
+        log("getting best preview size for size " + width + ", " + height);
         Camera.Size mBestPreviewSize = getBiggestSize(params.getSupportedPreviewSizes(), width, height, isSideways);
-        Log.v(TAG, "Best preview size is " + mBestPreviewSize.width + " , " + mBestPreviewSize.height);
+        log("Best preview size is " + mBestPreviewSize.width + " , " + mBestPreviewSize.height);
         params.setPreviewSize(mBestPreviewSize.width, mBestPreviewSize.height);
 
         // Picture size
         Camera.Size mBestPicSize = getBiggestSize(params.getSupportedPictureSizes());
-        Log.v(TAG, "Best pic size is " + mBestPicSize.width + " , " + mBestPicSize.height);
+        log("Best pic size is " + mBestPicSize.width + " , " + mBestPicSize.height);
         params.setPictureSize(mBestPicSize.width, mBestPicSize.height);
-
-        // XXX: Nexus 4 provision!
-        //params.setPictureSize(mBestPreviewSize.width, mBestPreviewSize.height);
 
         // Focus mode
         String focusMode = getBestFocusMode(params);
@@ -65,9 +62,10 @@ public class CameraUtils {
 
         String model = Build.MODEL;
         if (model != null && model.equals("Nexus 4")) {
-            Log.v(TAG, "Nexus 4; using max size for preview and photo");
+            log("Nexus 4; using max size for preview and photo");
             width = height = Integer.MAX_VALUE;
         }
+
 
         if (isSideways) {
             int temp = width;
@@ -75,13 +73,13 @@ public class CameraUtils {
             height = temp;
         }
 
-        Log.v(TAG, "Finding biggest size within " + width + ", " + height);
+        log("Finding biggest size within " + width + ", " + height);
 
         int biggestScore = 0;
         int biggestIdx = 0;
 
         for (int i = 0; i < sizes.length; i++) {
-            Log.v(TAG, "Found size " + sizes[i].x + ", " + sizes[i].y);
+            log("Found size " + sizes[i].x + ", " + sizes[i].y);
             int score = sizes[i].x * sizes[i].y;
             if (sizes[i].x <= width && sizes[i].y <= height &&
                    score > biggestScore) {
@@ -90,7 +88,7 @@ public class CameraUtils {
             }
         }
 
-        Log.v(TAG, "Best size is " + sizes[biggestIdx].x + ", " + sizes[biggestIdx].y);
+        log("Best size is " + sizes[biggestIdx].x + ", " + sizes[biggestIdx].y);
         return biggestIdx;
     }
 
@@ -192,7 +190,8 @@ public class CameraUtils {
                 degreesToRotate = 180;
             }
         }
-        Log.v(TAG, "camera orientation " + cameraOrientation + " screenOrientation " + screenOrientation);
+
+        log("camera orientation " + cameraOrientation + " screenOrientation " + screenOrientation);
 
         return degreesToRotate;
     }
@@ -267,7 +266,7 @@ public class CameraUtils {
         int width = previewSize.width;
         int height = previewSize.height;
 
-        Log.v(TAG, "Converting preview data from size " + width + ", " + height);
+        log("Converting preview data from size " + width + ", " + height);
 
         // Convert bytes first to YUV image, then to RGB
         YuvImage yuvImage = new YuvImage(bytes, ImageFormat.NV21, width, height, null);
@@ -311,5 +310,9 @@ public class CameraUtils {
         }
 
         return inSampleSize;
+    }
+
+    public static void log(String msg) {
+        Log.v(TAG, msg);
     }
 }

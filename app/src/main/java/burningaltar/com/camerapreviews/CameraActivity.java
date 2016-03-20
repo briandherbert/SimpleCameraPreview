@@ -19,11 +19,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import burningaltar.com.camerapreviewcompat.CameraPreviewViewCompat;
-import burningaltar.com.camerapreviewcompat.CameraUtils;
+import burningaltar.com.camerapreviewcompat.*;
+import burningaltar.com.camerapreviewcompat.BuildConfig;
 
 public class CameraActivity extends Activity implements CameraPreviewViewCompat.PreviewBitmapListener, CameraPreviewViewCompat.PhotoBitmapListener {
-    public static final String TAG = "KameraActivity";
+    public static final String TAG = "CameraActivity";
 
     public static final String KEY_FRONT_FACING = "KEY_FRONT_FACING";
     public static final String KEY_API_LEVEL = "KEY_API_LEVEL";
@@ -53,6 +53,8 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.v(TAG, "oncreate, internal? " + BuildConfig.FLAVOR);
 
         if (!hasCamera(this)) {
             Toast.makeText(this, "No camera found!", Toast.LENGTH_LONG).show();
@@ -183,7 +185,7 @@ public class CameraActivity extends Activity implements CameraPreviewViewCompat.
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.CAMERA)) {
 
-                Toast.makeText(this, "Not showing reason", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Don't have permission", Toast.LENGTH_LONG).show();
 
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user

@@ -195,8 +195,7 @@ public class Camera2PreviewTexture extends BaseCameraPreviewTexture {
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureBuilder.build(), null, null);
         } catch (CameraAccessException e) {
-            Log.w(TAG, "Unable to get preview " + e);
-            e.printStackTrace();
+            loge("Unable to get preview ", e);
         }
     }
 
