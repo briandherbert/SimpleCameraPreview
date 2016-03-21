@@ -16,7 +16,7 @@ That alone will show a camera preview if possible; the custom attributes are opt
 **FOR API LEVEL >= 23, YOU MUST REMEMBER TO GRANT CAMERA PERMISSIONS** because of Android's new and annoying on-demand permissions model. This library will fail silently if permissions aren't present when initialized, so you'll have to call `SimpleCameraPreview.showPreview()` after they're granted. See [CameraActivity.java](CameraActivity.java) for a ghetto example of this.
 
 ## Features
-#### Camera API
+#### Camera APIs
 For Android APIs 21 and above, [camera2](http://developer.android.com/intl/es/reference/android/hardware/camera2/package-summary.html) is the default package used under the hood. Below 21, the [legacy camera](http://developer.android.com/intl/es/reference/android/hardware/Camera.html) package is used. As shown in the XML example above, you can force the camera api to `one` or `two`, though it'll only be effective to downgrade. This can also be done via `.setCameraApiLevel()`
 
 #### Front/Rear Camera
@@ -49,6 +49,8 @@ dependencies {
 }
 ```
 Or if the Jitpack route doesn't suit you, copy/paste willy-nilly. There are individual classes for both a [legacy camera](CameraPreviewTexture.java) and [camera2](Camera2PreviewTexture.java) preview view; those might better suit your needs if you'd prefer to deal with a specific camera API directly.
+
+In the Android Studio xml preview pane, a TextView is used to display the camera API and whether front-facing is used.
 
 ## Shortcomings / TODO / Wishlist
 + Doesn't save which camera (front/rear) is used or API level; persisting those through activity restarts is the implementer's job.
