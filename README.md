@@ -1,6 +1,6 @@
 # SimpleCameraPreview for Android
 
-...shows a camera preview with minimal effort at the expense of customization, and includes very basic photo-taking functionality.
+...shows a camera preview of any size with minimal effort, and includes very basic photo-taking functionality. Both camera and camera2 APIs are used, but most camera *features* are not yet implemented (focus, flash, ISO, etc).
 
 ```XML
     <burningaltar.com.camerapreviewcompat.SimpleCameraPreview
@@ -48,11 +48,12 @@ dependencies {
   compile 'com.github.briandherbert:SimpleCameraPreview:0.1.4'
 }
 ```
-Or if the Jitpack route doesn't suit you, copy/paste willy-nilly. There are individual classes for both a camera and camera2 preview view.
+Or if the Jitpack route doesn't suit you, copy/paste willy-nilly. There are individual classes for both a [legacy camera](CameraPreviewTexture.java) and [camera2](Camera2PreviewTexture.java) preview view; those might better suit your needs if you'd prefer to deal with a specific camera API directly.
 
 ## Shortcomings / TODO / Wishlist
 + Doesn't save which camera (front/rear) is used or API level; persisting those through activity restarts is the implementer's job.
 + Same deal with requesting camera permissions on >= Marshmallow
++ Certain devices, like the Nexus 4, require special behavior since the firmware/hardware doesn't follow the API contract
 + Only uses the first two hardware cameras (typically FRONT and REAR)
 + Can't manually choose photo size
 + Can't set camera params like focus mode
