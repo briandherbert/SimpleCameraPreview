@@ -1,6 +1,6 @@
 # SimpleCameraPreview for Android
 
-...shows a camera preview of any size with minimal effort, and includes very basic photo-taking functionality. Both camera and camera2 APIs are used, but most camera *features* are not yet implemented (focus, flash, ISO, etc).
+...shows a camera preview of any size with minimal effort, and includes very basic photo-taking functionality. Both camera and camera2 APIs are used, but most camera features are not yet implemented (focus, flash, ISO, etc).
 
 ```XML
     <burningaltar.com.camerapreviewcompat.SimpleCameraPreview
