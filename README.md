@@ -45,7 +45,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.github.briandherbert:SimpleCameraPreview:0.1.4'
+  compile 'com.github.briandherbert:SimpleCameraPreview:0.1.3'
 }
 ```
 Or if the Jitpack route doesn't suit you, copy/paste willy-nilly. There are individual classes for both a [legacy camera](CameraPreviewTexture.java) and [camera2](Camera2PreviewTexture.java) preview view; those might better suit your needs if you'd prefer to deal with a specific camera API directly.
