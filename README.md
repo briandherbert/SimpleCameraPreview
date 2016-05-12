@@ -1,6 +1,6 @@
 # SimpleCameraPreview for Android
 
-...shows a camera preview of any size with minimal effort, and includes very basic photo-taking functionality. Both camera and camera2 APIs are used, but most camera features are not yet implemented (focus, flash, ISO, etc).
+Shows a camera preview of any size with minimal effort, and includes very basic photo-taking functionality. Both camera and camera2 APIs are used, but most camera features are not yet implemented (focus, flash, ISO, etc).
 
 ```XML
     <burningaltar.com.camerapreviewcompat.SimpleCameraPreview
@@ -11,9 +11,9 @@
         custom:frontFacing="true" />
 ```
 
-That alone will show a camera preview if possible; the custom attributes are optional.
+That alone will show a camera preview if permissions allow; the custom attributes are optional.
 
-**FOR API LEVEL >= 23, YOU MUST REMEMBER TO GRANT CAMERA PERMISSIONS** because of Android's new and annoying on-demand permissions model. This library will fail silently if permissions aren't present when initialized, so you'll have to call `SimpleCameraPreview.showPreview()` after they're granted. See [CameraActivity.java](CameraActivity.java) for a ghetto example of this.
+**FOR API LEVEL >= 23, YOU MUST REMEMBER TO GRANT CAMERA PERMISSIONS** because of Android's new and annoying, on-demand permissions model. This library will fail silently if permissions aren't present when initialized, so you'll have to call `SimpleCameraPreview.showPreview()` after they're granted. See [CameraActivity.java](CameraActivity.java) for a ghetto example of this.
 
 ## Features
 #### Camera APIs
@@ -55,7 +55,7 @@ In the Android Studio xml preview pane, a TextView is used to display the camera
 ## Shortcomings / TODO / Wishlist
 + Doesn't save which camera (front/rear) is used or API level; persisting those through activity restarts is the implementer's job.
 + Same deal with requesting camera permissions on >= Marshmallow
-+ Certain devices, like the Nexus 4, require special behavior since the firmware/hardware doesn't follow the API contract
++ Certain devices (like the Nexus 4) require special behavior since the firmware/hardware doesn't follow the API contract
 + Only uses the first two hardware cameras (typically FRONT and REAR)
 + Can't manually choose photo size
 + Can't set camera params like focus mode
