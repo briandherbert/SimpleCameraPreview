@@ -16,6 +16,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.AttributeSet;
@@ -332,7 +333,7 @@ class Camera2PreviewTexture extends BaseCameraPreviewTexture {
 
         @Override
         public void onImageAvailable(ImageReader reader) {
-            log("Image available");
+            log("Image available for " + Build.MODEL + ", " + Build.DEVICE + ", " + Build.PRODUCT);
             if (mPreviewBitmapListener != null || mPhotoBitmapListener != null) {
                 Image image = reader.acquireLatestImage();
                 ByteBuffer buffer = image.getPlanes()[0].getBuffer();
@@ -341,14 +342,21 @@ class Camera2PreviewTexture extends BaseCameraPreviewTexture {
                 byte[] b = new byte[buffer.remaining()];
                 buffer.get(b);
 
+                int rotation = 0;
+
+                // Galaxy S7
+                if (Build.MODEL != null && Build.MODEL.contains("SAMSUNG-SM-G930")) {
+                    rotation = mDegreesToRotatePhoto;
+                }
+
                 // Rotation was already set captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, mDegreesToRotatePhoto);
                 if (mPreviewBitmapListener != null) {
                     // A preview was requested
-                    mPreviewBitmapListener.onPreview(b, 0);
+                    mPreviewBitmapListener.onPreview(b, rotation);
                     mPreviewBitmapListener = null;
                 } else {
                     // A photo was requested
-                    mPhotoBitmapListener.onPhoto(b, 0);
+                    mPhotoBitmapListener.onPhoto(b, rotation);
                     mPhotoBitmapListener = null;
                 }
 

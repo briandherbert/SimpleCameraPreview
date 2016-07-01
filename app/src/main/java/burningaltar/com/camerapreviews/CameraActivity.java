@@ -4,11 +4,15 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -17,6 +21,11 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
 
 import burningaltar.com.camerapreviewcompat.*;
 import burningaltar.com.camerapreviewcompat.BuildConfig;
@@ -43,7 +52,7 @@ public class CameraActivity extends Activity implements SimpleCameraPreview.Prev
 
     SimpleCameraPreview mCameraView;
 
-    boolean mIsFrontFacing = true;
+    boolean mIsFrontFacing = false;
     SimpleCameraPreview.CameraApiLevel mApiLevel;
 
     // Load the full preview/photo sizes into memory?
@@ -238,5 +247,47 @@ public class CameraActivity extends Activity implements SimpleCameraPreview.Prev
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_FRONT_FACING, mIsFrontFacing);
         outState.putSerializable(KEY_API_LEVEL, mApiLevel);
+    }
+
+    class SavePhotoTask extends AsyncTask<byte[], String, Uri> {
+        @Override
+        protected Uri doInBackground(byte[]... jpeg) {
+            File photoFile=new File(Environment.getExternalStorageDirectory(), "photo.jpg");
+
+            if (photoFile.exists()) {
+                photoFile.delete();
+            }
+
+            try {
+                FileOutputStream fos=new FileOutputStream(photoFile.getPath());
+
+                fos.write(jpeg[0]);
+                fos.close();
+            }
+            catch (java.io.IOException e) {
+                Log.v("blarg", "Exception in photoCallback", e);
+            }
+
+            Uri uri = Uri.fromFile(photoFile);
+
+            return(Uri.fromFile(photoFile));
+        }
+
+        @Override
+        protected void onPostExecute(Uri uri) {
+            Log.v("blarg", "done saving");
+            onBmpSaved(uri);
+        }
+    }
+
+    public void onBmpSaved(Uri uri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            mImgPreviewSnapshot.setImageBitmap(bitmap);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

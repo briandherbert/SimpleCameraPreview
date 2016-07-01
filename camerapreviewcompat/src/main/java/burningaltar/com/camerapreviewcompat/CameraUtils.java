@@ -65,7 +65,6 @@ public class CameraUtils {
             width = height = Integer.MAX_VALUE;
         }
 
-
         if (isSideways) {
             int temp = width;
             width = height;
